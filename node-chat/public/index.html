@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="index.css">
+    <title>Socket.IO chat</title>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+
+    <ul id="messages"></ul>
+    <form action="">
+        <input id="m" autocomplete="off" />
+        <button>Send</button>
+    </form>
+
+    <script type="text/javascript" src="socket.io/socket.io.js"></script>
+    <script>
+        var name = prompt('请输入你的昵称： ');
+        var socket = io();
+
+        socket.emit("join", name);
+        document.title = name + "'s chatting";
+
+        socket.on("join", function(user){
+            NewUser(user + " joins into the chatting.");
+        });
+
+        socket.on("message", function(user, msg){
+            NewMsg(user, msg);
+        });
+
+        $('form').submit(function(){
+            var msg = $('#m').val();
+            socket.emit("message", name, msg);
+            $("#m").val("");
+            return false;
+        });
+
+        function NewUser(msg){
+            $('#messages').append($('<li>').text(msg));
+        }
+
+        
+        function NewMsg(name, msg){
+            $('#messages').append($('<li>').text(name+": "+msg));
+        }
+    </script>
+</body>
+</html>
